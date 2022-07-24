@@ -7,8 +7,6 @@ class <name>(HTML, name='<name>', **<your options here>):
     '''Your documentation'''
 """
 
-from pickletools import optimize
-
 
 try:
     from ._core import _HTML
@@ -109,3 +107,15 @@ class ul(HTML, name='ul'):
 
 class li(HTML, name='li', optimize_child=True):
     pass
+
+class table(HTML, name='table'):
+    pass
+
+class tr(HTML, name="tr"):
+    """Table Row"""
+
+class th(HTML, name='th', newlineoncompile=False):
+    """Table Header"""
+
+class td(HTML, name='td', newlineoncompile=False):
+    """Table Data"""

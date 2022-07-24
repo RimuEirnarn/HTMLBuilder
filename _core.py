@@ -3,7 +3,7 @@
 There's also a good note here, the << and >> are translated to append/push and pop"""
 
 from typing import Any, Callable, List, NoReturn, Protocol, Union
-from unicodedata import name
+
 from string import whitespace, punctuation
 from re import compile as re_compile, escape as re_escape
 
@@ -186,10 +186,10 @@ class _BaseElement:
                 continue
             n[k] = v
         return n
-    
-    def __getitem__(self, index:int):
+
+    def __getitem__(self, index: int):
         return self._elements[index]
-    
+
     def __getattr__(self, name: str):
         try:
             return object.__getattr__(self, name)
@@ -204,10 +204,10 @@ class _BaseElement:
             return
 
         raise TypeError(f"{element} is not a valid element")
-    
+
     def iterchild(self):
         return self._elements.__iter__()
-    
+
     def itervars(self):
         return self._data.items()
 
@@ -216,6 +216,12 @@ class _BaseElement:
 
     def remove(self, element):
         self._elements.remove(element)
+    
+    def clearchild(self):
+        self._elements.clear()
+    
+    def insert(self, index, element):
+        self._elements.insert(index, element)
 
     def pop(self, index):
         return self._elements.pop(index)
@@ -261,8 +267,11 @@ class _BaseElement:
             if isinstance(val, str):
                 n += val
                 continue
-            val._decrease_level = True if type(self) in (_BaseElement, _BaseElement._rootnode) else False
-            n += (a if (type(self) in (_BaseElement, _BaseElement._rootnode)) is not True else _a)+val.compile(x+1)
+            if hasattr(val, '_decrease_level'):
+                val._decrease_level = True if type(self) in (
+                    _BaseElement, _BaseElement._rootnode) else False
+            n += (a if (type(self) in (_BaseElement, _BaseElement._rootnode))
+                  is not True else _a)+(val.compile(x+1) if hasattr(val, 'compile') else str(val))
         return n+(_a if x == 1 else _b)+(_element_closing.format(name=self._name) if self._require_close is True else "")
 
     def __repr__(self):
@@ -289,5 +298,6 @@ class _debugelementc(_BaseElement, name='debugc', canonical_names=['href', 'oncl
 class _p_like_element(_BaseElement, name='debugd', newlineoncompile=False):
     pass
 
-class HTML(_BaseElement, name="html", isroot=True, header="<!DOCTYPE>"):
+
+class HTML(_BaseElement, name="html", isroot=True, header="<!DOCTYPE html>"):
     pass
