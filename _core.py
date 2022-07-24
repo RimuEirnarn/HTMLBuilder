@@ -267,6 +267,9 @@ class _BaseElement:
             if isinstance(val, str):
                 n += val
                 continue
+            if not hasattr(val, "compile") and not hasattr(val, "_parseNames"):
+                n += str(val)
+                continue
             if hasattr(val, '_decrease_level'):
                 val._decrease_level = True if type(self) in (
                     _BaseElement, _BaseElement._rootnode) else False
